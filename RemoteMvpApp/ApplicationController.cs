@@ -1,4 +1,5 @@
-﻿using RemoteMvpLib;
+﻿using CsvHelper.Configuration.Attributes;
+using RemoteMvpLib;
 
 namespace RemoteMvpApp
 {
@@ -22,7 +23,7 @@ namespace RemoteMvpApp
 
         public ApplicationController(IActionEndpoint actionEndpoint)
         {
-            _filePath = "myFilepath";           // TODO: Change if custom filepath from user
+            _filePath = "myFilepath.csv";           // TODO: Change if custom filepath from user
 
             // Create new Model
             _users = new Userlist(_filePath);
@@ -56,6 +57,11 @@ namespace RemoteMvpApp
                 case ActionType.Register:
                     Process_Register(handler, request.UserName, request.Password);
                     break;
+                //
+                case ActionType.RegisterAdmin:
+                    Process_Register(handler, request.UserName, request.Password, true);
+                    break;
+                //
                 default:
                     throw new ArgumentOutOfRangeException("Request not supported");
             }
@@ -80,7 +86,7 @@ namespace RemoteMvpApp
             }
         }
 
-        private void Process_Register(RemoteActionEndpoint handler, string username, string password)
+        private void Process_Register(RemoteActionEndpoint handler, string username, string password, bool admin = false)
         {
             switch (_users.RegisterUser(username, password))
             {

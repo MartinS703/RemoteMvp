@@ -19,7 +19,7 @@ namespace RemoteMvpApp
 
     internal class Userlist
     {
-        private record User(string UserName, string Password);
+        private record User(string UserName, string Password, bool admin = false);
         private readonly List<User> _users;
         private string _filePath;
 
@@ -54,14 +54,14 @@ namespace RemoteMvpApp
             return UserListActionResult.UserNotExisting;
         }
 
-        public UserListActionResult RegisterUser(string username, string password)
+        public UserListActionResult RegisterUser(string username, string password, bool admin = false)
         {
             if (_users.Any(user => user.UserName.Equals(username)))
             {
                 return UserListActionResult.UserAlreadyExists;
             }
 
-            User newUser = new(username, password);
+            User newUser = new(username, password, admin);
             _users.Add(newUser);
             return UserListActionResult.RegistrationOk;
         }
