@@ -10,10 +10,14 @@ namespace RemoteMvpApp
         // ActionEndpoint (to be called by the view)
         private readonly IActionEndpoint _actionEndpoint;
 
+        private string _filePath;
+
         public ApplicationController(IActionEndpoint actionEndpoint)
         {
+            _filePath = "myFilepath";           // TODO: Change if custom filepath from user
+
             // Create new Model
-            _users = new Userlist();
+            _users = new Userlist(_filePath);
 
             // Link ActionEndpoint to local method
             _actionEndpoint = actionEndpoint;
@@ -79,6 +83,9 @@ namespace RemoteMvpApp
                 case UserListActionResult.RegistrationOk:
                     Console.WriteLine("User registration OK.");
                     handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, $"Registration successful for {username}. You can now login."));
+                    //
+                    
+                    //
                     break;
                 default:
                     Console.WriteLine("Unknown action.");
