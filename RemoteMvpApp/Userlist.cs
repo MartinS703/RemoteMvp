@@ -20,7 +20,7 @@ namespace RemoteMvpApp
 
     internal class Userlist
     {
-        private record User(string UserName, string Password, bool admin = false);
+        private record User(string UserName, string Password, bool admin);
         private readonly List<User> _users;
         private string _filePath;
 
@@ -96,5 +96,10 @@ namespace RemoteMvpApp
             }
 
         }
+
+        // irgendetwas mit csv 
+        // interfaces
+
+        // Vielleicht bekommt man Code(View oder MODEL)
     }
 }

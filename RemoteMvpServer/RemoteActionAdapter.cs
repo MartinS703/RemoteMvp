@@ -31,7 +31,7 @@ namespace RemoteMvpLib
                 // In this case, we get one IP address of localhost that is IP : 127.0.0.1
                 // If a host has multiple addresses, you will get a list of addresses
                 var host = Dns.GetHostEntry(_host);
-                var ipAddress = host.AddressList[0];
+                var ipAddress = host.AddressList[1];
                 var remoteEP = new IPEndPoint(ipAddress, _port);
 
                 // Create a TCP/IP  socket.

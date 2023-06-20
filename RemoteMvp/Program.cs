@@ -13,7 +13,7 @@ namespace RemoteMvpClient
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            var client = new RemoteActionAdapter("localhost", 11000);
+            var client = new RemoteActionAdapter("localhost", 1000);
             var clientController = new ClientPresenter(client);
             clientController.OpenUI(true);
         }

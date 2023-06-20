@@ -58,6 +58,7 @@ namespace RemoteMvpApp
                     Process_Register(handler, request.UserName, request.Password);
                     break;
                 //
+
                 case ActionType.RegisterAdmin:
                     Process_Register(handler, request.UserName, request.Password, true);
                     break;
@@ -91,7 +92,7 @@ namespace RemoteMvpApp
 
         private void Process_Register(RemoteActionEndpoint handler, string username, string password, bool admin = false)
         {
-            switch (_users.RegisterUser(username, password))
+            switch (_users.RegisterUser(username, password, admin))
             {
                 case UserListActionResult.UserAlreadyExists:
                     Console.WriteLine("Error registering: User already existing.");
