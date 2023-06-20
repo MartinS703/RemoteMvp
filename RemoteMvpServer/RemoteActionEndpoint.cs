@@ -18,7 +18,7 @@ namespace RemoteMvpLib
         {
             try
             {
-                _host ??= Dns.GetHostEntry("localhost");
+                _host ??= Dns.GetHostEntry("localhost");        // if host is null -> host = localhost
                 _ipAddress = _host.AddressList[0];
                 _localEndPoint = new IPEndPoint(_ipAddress, port);
             }

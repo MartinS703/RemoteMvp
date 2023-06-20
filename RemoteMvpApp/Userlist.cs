@@ -1,5 +1,7 @@
-﻿using System;
+﻿using CsvHelper;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +21,20 @@ namespace RemoteMvpApp
     {
         private record User(string UserName, string Password);
         private readonly List<User> _users;
+        private string _filePath;
 
-        public Userlist()
+        /// <summary>
+        /// just accept csvfile paths
+        /// </summary>
+        /// <param name="path"></param>
+        public Userlist(string? path)
         {
             _users = new List<User>();
+            // Check if filePath is a valid csv filepath
+            if (!String.IsNullOrEmpty(path) && path.EndsWith(".csv"))
+            {
+                _filePath = path;
+            }
         }
 
         public UserListActionResult LoginUser(string username, string password)
@@ -62,6 +74,16 @@ namespace RemoteMvpApp
         public void RemoveAllUsers()
         {
             _users.Clear();
+        }
+
+        private void StoreUserData()
+        {
+            using (var writer = new StreamWriter(_filePath))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.WriteRecords(_users); // List to store
+            }
+
         }
     }
 }
