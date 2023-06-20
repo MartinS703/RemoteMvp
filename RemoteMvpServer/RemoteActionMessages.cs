@@ -5,6 +5,7 @@ namespace RemoteMvpLib
     public enum ActionType
     {
         Register,
+        RegisterAdmin,
         Login,
         Logout
     }

@@ -20,7 +20,10 @@ namespace RemoteMvpClient
             _clientView = new ClientView();
             _clientView.LoginRequested += OnLoginRequested;
             _clientView.RegisterRequested += OnRegisterRequested;
+            _clientView.RegisterAdminRequested += OnRegisterAdminRequested;
         }
+
+       
 
         public void OpenUI(bool isModal)
         {
@@ -44,6 +47,11 @@ namespace RemoteMvpClient
         private async void OnRegisterRequested(object? sender, Tuple<string, string> e)
         {
             RemoteActionRequest loginRequest = new RemoteActionRequest(ActionType.Register, e.Item1, e.Item2);
+            await ProcessRequest(loginRequest);
+        }
+        private async void OnRegisterAdminRequested(object? sender, Tuple<string, string> e)
+        {
+            RemoteActionRequest loginRequest = new RemoteActionRequest(ActionType.RegisterAdmin, e.Item1, e.Item2);
             await ProcessRequest(loginRequest);
         }
 
@@ -71,7 +79,10 @@ namespace RemoteMvpClient
                             _clientView.RegisterOk(response.Message);
                             break;
                         case ActionType.Login:
-                            _clientView.LoginOk(response.Message);
+                            _clientView.LoginOk(response.Message);   
+                            break;
+                        case ActionType.RegisterAdmin:
+                            _clientView.RegisterOk(response.Message);
                             break;
                     }
                     break;

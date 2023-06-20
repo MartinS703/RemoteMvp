@@ -7,6 +7,7 @@ namespace RemoteMvpClient
 
         public event EventHandler<Tuple<string, string>> LoginRequested;
         public event EventHandler<Tuple<string, string>> RegisterRequested;
+        public event EventHandler<Tuple<string, string>> RegisterAdminRequested;
 
         public ClientView()
         {
@@ -22,7 +23,10 @@ namespace RemoteMvpClient
         {
             RegisterRequested?.Invoke(sender, new Tuple<string, string>(tbUsername.Text, tbPassword.Text));
         }
-
+        private void btnRegisterAdmin_Click(object sender, EventArgs e)
+        {
+            RegisterAdminRequested?.Invoke(sender, new Tuple<string, string>(tbUsername.Text, tbPassword.Text));
+        }
 
         public void ShowErrorMessage(string message)
         {
@@ -66,5 +70,12 @@ namespace RemoteMvpClient
                 button2.Enabled = false;
             }
         }
+
+        private void ClientView_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        
     }
 }
