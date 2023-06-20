@@ -4,14 +4,6 @@ namespace RemoteMvpApp
 {
     internal class ApplicationController
     {
-
-
-
-        // Fuck you
-
-
-
-
         // Model 
         private readonly Userlist _users;
 
