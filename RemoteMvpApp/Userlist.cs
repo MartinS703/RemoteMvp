@@ -14,6 +14,7 @@ namespace RemoteMvpApp
         UserAlreadyExists,
         UserOkPasswordWrong,
         AccessGranted,
+        AccessGrantedAsAdmin,
         RegistrationOk
     }
 
@@ -43,7 +44,17 @@ namespace RemoteMvpApp
             {
                 if (user.Password.Equals(password))
                 {
-                    return UserListActionResult.AccessGranted;
+
+                    //
+                    if (user.admin == true) {
+                        return UserListActionResult.AccessGrantedAsAdmin;
+                    }
+                    else
+                    {
+                        return UserListActionResult.AccessGranted;
+                    }
+                    //
+
                 }
                 else
                 {

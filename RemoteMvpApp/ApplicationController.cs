@@ -74,6 +74,9 @@ namespace RemoteMvpApp
                 case UserListActionResult.AccessGranted:
                     handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, $"Access granted for {username}."));
                     break;
+                case UserListActionResult.AccessGrantedAsAdmin:
+                    handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, $"Access granted for {username} as admin."));
+                    break;
                 case UserListActionResult.UserOkPasswordWrong:
                     handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Error, "Wrong password.")); 
                     break;
