@@ -1,16 +1,15 @@
 ﻿using CsvHelper.Configuration.Attributes;
 using RemoteMvpLib;
+using System.Collections.Concurrent;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace RemoteMvpApp
 {
     internal class ApplicationController
     {
-
-
-
-        // Fuck you
-
-
+        //
+        private static ConcurrentDictionary<string, string> sessions = new ConcurrentDictionary<string, string>();
+        //
 
 
         // Model 
@@ -63,20 +62,40 @@ namespace RemoteMvpApp
                     Process_Register(handler, request.UserName, request.Password, true);
                     break;
                 //
+                case ActionType.DeleteUser:
+                    // TODO: Implement action
+                    if (sessions.ContainsKey(request.SessionToken)) {
+                        Process_DeleteUser(handler, request.UserName, request.Password, request.);
+                    }
+                    break;
+                case ActionType.SendUsers:
+
+                    break;
+
+                // TODO: More ActionTypes
                 default:
                     throw new ArgumentOutOfRangeException("Request not supported");
             }
         }
-        
+        private void Process_DeleteUser(RemoteActionEndpoint handler, string username, string password, string usernameDelete)
+        {
+            // TODO: Implement deletion
+        }
+        private void Process_SendUsers(RemoteActionEndpoint handler, string username, string password)
+        {
+            // TODO: Implement deletion
+        }
         private void Process_Login(RemoteActionEndpoint handler, string username, string password)
         {
             switch (_users.LoginUser(username, password))
             {
                 case UserListActionResult.AccessGranted:
-                    handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, $"Access granted for {username}."));
+                    string token = GenerateSessionToken(username);
+                    handler.PerformExtendedActionResponse(handler.Handler, new RemoteExtendedActionResponse(ResponseType.Success, $"Access granted for {username}.", token, false));
                     break;
                 case UserListActionResult.AccessGrantedAsAdmin:
-                    handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, $"Access granted for {username} as admin."));
+                    string adminToken = GenerateSessionToken(username);
+                    handler.PerformExtendedActionResponse(handler.Handler, new RemoteExtendedActionResponse(ResponseType.Success, $"Access granted for {username}.", adminToken, true));
                     break;
                 case UserListActionResult.UserOkPasswordWrong:
                     handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Error, "Wrong password.")); 
@@ -128,6 +147,22 @@ namespace RemoteMvpApp
                 .ToDictionary(pair => pair[0], pair => pair[1]);
 
             return keyValuePairs;
+        }
+
+        /// <summary>
+        /// Generates and adds session token, new session token if user already has one
+        /// </summary>
+        /// <param name="username">Username to log in</param>
+        /// <returns>usernames generated session token</returns>
+        private string GenerateSessionToken(string username)
+        {
+            // Create new session token
+            string sessionToken = Guid.NewGuid().ToString();      
+
+            // Store the session token on the server side
+            sessions.TryAdd(sessionToken, username);
+
+            return sessionToken;
         }
     }
 }

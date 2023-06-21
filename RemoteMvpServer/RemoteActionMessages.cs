@@ -7,7 +7,9 @@ namespace RemoteMvpLib
         Register,
         RegisterAdmin,
         Login,
-        Logout
+        Logout,
+        DeleteUser,
+        SendUsers,
     }
 
     public class RemoteActionRequest
@@ -18,11 +20,14 @@ namespace RemoteMvpLib
 
         public string Password { get; }
 
-        public RemoteActionRequest(ActionType type, string username, string password)
+        public string SessionToken { get; }
+
+        public RemoteActionRequest(ActionType type, string username, string password, string sessionToken)
         {
             Type = type;
             UserName = username;
             Password = password;
+            SessionToken = sessionToken;
         }
     }
 
@@ -42,6 +47,21 @@ namespace RemoteMvpLib
         {
             Type = type;
             Message = message;
+        }
+    }
+    public class RemoteExtendedActionResponse
+    {
+        public ResponseType Type { get; }
+        public string? Message { get; }
+        public string NewToken { get; }
+        public bool AdminVerfied { get; }
+
+        public RemoteExtendedActionResponse(ResponseType type, string? message, string newToken , bool adminVerfied)
+        {
+            Type = type;
+            Message = message;
+            NewToken = newToken;
+            AdminVerfied = adminVerfied;
         }
     }
 }

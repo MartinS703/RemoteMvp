@@ -89,13 +89,26 @@ namespace RemoteMvpLib
             handler.Close();
         }
 
+        public void PerformExtendedActionResponse(Socket handler, RemoteExtendedActionResponse extendedResponse)
+        {
+            string responseString = ExtendedSerialize(extendedResponse);
+            byte[] msg = Encoding.ASCII.GetBytes(responseString);
+            handler.Send(msg);
+            handler.Shutdown(SocketShutdown.Both);
+            handler.Close();
+        }
+        private string ExtendedSerialize(RemoteExtendedActionResponse extendedResponse)
+        {
+            // TODO: Peter sagen, dass er unterschiedliche nachrichten bekommt
+            return string.Format("{0};{1};{2};{3}", extendedResponse.Type.ToString(), extendedResponse.Message, extendedResponse.NewToken, extendedResponse.AdminVerfied.ToString());
+        }
 
         // ############# Protocol layer #############
 
         private RemoteActionRequest Deserialize(string requestString)
         {
             string[] parts = requestString.Split(';');
-            RemoteActionRequest request = new RemoteActionRequest(Enum.Parse<ActionType>(parts[0]), parts[1], parts[2]);
+            RemoteActionRequest request = new RemoteActionRequest(Enum.Parse<ActionType>(parts[0]), parts[1], parts[2]);    // TODO: Add information, such as deleteusername
             return request;
         }
 
