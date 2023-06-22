@@ -40,18 +40,18 @@ namespace RemoteMvpClient
 
         private async void OnLoginRequested(object? sender, Tuple<string, string> e)
         {
-            RemoteActionRequest loginRequest = new RemoteActionRequest(ActionType.Login, e.Item1, e.Item2);
+            RemoteFirstRequest loginRequest = new RemoteActionRequest(ActionType.Login, e.Item1, e.Item2);
             await ProcessRequest(loginRequest);
         }
 
         private async void OnRegisterRequested(object? sender, Tuple<string, string> e)
         {
-            RemoteActionRequest loginRequest = new RemoteActionRequest(ActionType.Register, e.Item1, e.Item2);
+            RemoteFirstRequest loginRequest = new RemoteActionRequest(ActionType.Register, e.Item1, e.Item2);
             await ProcessRequest(loginRequest);
         }
         private async void OnRegisterAdminRequested(object? sender, Tuple<string, string> e)
         {
-            RemoteActionRequest loginRequest = new RemoteActionRequest(ActionType.RegisterAdmin, e.Item1, e.Item2);
+            RemoteFirstRequest loginRequest = new RemoteActionRequest(ActionType.RegisterAdmin, e.Item1, e.Item2);
             await ProcessRequest(loginRequest);
         }
 
@@ -60,7 +60,7 @@ namespace RemoteMvpClient
         /// </summary>
         /// <param name="sender">Source of event</param>
         /// <param name="request">Property-based request</param>
-        private async Task ProcessRequest(RemoteActionRequest request)
+        private async Task ProcessRequest(RemoteFirstRequest request)
         {
             // Execute action in actionlistener and wait for result asynchronously
             RemoteActionResponse response = await _adapter.PerformActionAsync(request);

@@ -29,7 +29,8 @@ namespace RemoteMvpApp
 
             // Link ActionEndpoint to local method
             _actionEndpoint = actionEndpoint;
-            _actionEndpoint.OnActionPerformed += EndpointOnActionPerformed;
+            _actionEndpoint.OnFirstActionPerformed += EndpointOnActionPerformed;
+            _actionEndpoint.OnActionPerformed += EndpointOnExtendedActionPerformed;
         }
 
 
@@ -43,7 +44,7 @@ namespace RemoteMvpApp
             return task;
         }
 
-        private void EndpointOnActionPerformed(object? sender, RemoteActionRequest request)
+        private void EndpointOnActionPerformed(object? sender, RemoteFirstRequest request)
         {
             if (sender is not RemoteActionEndpoint) return;
 
@@ -61,15 +62,32 @@ namespace RemoteMvpApp
                 case ActionType.RegisterAdmin:
                     Process_Register(handler, request.UserName, request.Password, true);
                     break;
-                //
+                // TODO: More ActionTypes
+                default:
+                    throw new ArgumentOutOfRangeException("Request not supported");
+            }
+        }
+
+        private void EndpointOnExtendedActionPerformed(object? sender, RemoteActionRequest actionRequest)
+        {
+            if (sender is not RemoteActionEndpoint) return;
+
+            var handler = (RemoteActionEndpoint)sender;
+            switch (actionRequest.Type)
+            {
                 case ActionType.DeleteUser:
                     // TODO: Implement action
-                    if (sessions.ContainsKey(request.SessionToken)) {
-                        Process_DeleteUser(handler, request.UserName, request.Password, request.);
+                    if (sessions.ContainsKey(actionRequest.SessionToken))
+                    {
+                        Process_DeleteUser(handler, actionRequest.Instruction);
                     }
                     break;
                 case ActionType.SendUsers:
-
+                    // TODO: Implement action
+                    if (sessions.ContainsKey(actionRequest.SessionToken))
+                    {
+                        Process_SendUsers(handler);
+                    }
                     break;
 
                 // TODO: More ActionTypes
@@ -77,13 +95,14 @@ namespace RemoteMvpApp
                     throw new ArgumentOutOfRangeException("Request not supported");
             }
         }
-        private void Process_DeleteUser(RemoteActionEndpoint handler, string username, string password, string usernameDelete)
+
+        private void Process_DeleteUser(RemoteActionEndpoint handler, string usernameDelete)
         {
             // TODO: Implement deletion
         }
-        private void Process_SendUsers(RemoteActionEndpoint handler, string username, string password)
+        private void Process_SendUsers(RemoteActionEndpoint handler)
         {
-            // TODO: Implement deletion
+            // TODO: Implement send users
         }
         private void Process_Login(RemoteActionEndpoint handler, string username, string password)
         {

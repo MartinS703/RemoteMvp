@@ -16,7 +16,7 @@ namespace RemoteMvpLib
             _port = port;
         }
 
-        public async Task<RemoteActionResponse> PerformActionAsync(RemoteActionRequest request)
+        public async Task<RemoteActionResponse> PerformActionAsync(RemoteFirstRequest request)
         {
             var buffer = new byte[1024];
             RemoteActionResponse response;
@@ -66,7 +66,7 @@ namespace RemoteMvpLib
                 Console.WriteLine("ArgumentNullException : {0}", aex.ToString());
                 throw;
             }
-            catch (SocketException sex)
+            catch (SocketException sex)     // ?
             {
                 Console.WriteLine("SocketException : {0}", sex.ToString());
                 throw;
@@ -83,7 +83,7 @@ namespace RemoteMvpLib
 
         // ############# Protocol layer #############
 
-        private static string Serialize(RemoteActionRequest request)
+        private static string Serialize(RemoteFirstRequest request)
         {
             return string.Format("{0};{1};{2}", request.Type.ToString(), request.UserName, request.Password);
         }

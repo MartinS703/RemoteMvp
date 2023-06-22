@@ -1,11 +1,13 @@
 ﻿using System.Net.Sockets;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace RemoteMvpLib
 {
     public class RemoteActionEndpoint : IActionEndpoint
     {
+        public event EventHandler<RemoteFirstRequest> OnFirstActionPerformed;
         public event EventHandler<RemoteActionRequest> OnActionPerformed;
 
         private readonly IPAddress _ipAddress;
@@ -64,9 +66,20 @@ namespace RemoteMvpLib
                     string requestString = Encoding.ASCII.GetString(bytes, 0, bytesRec);
                     Console.WriteLine("Text received : {0}", requestString);
 
-                    RemoteActionRequest request = Deserialize(requestString);
-
-                    OnActionPerformed?.Invoke(this, request);
+                    //
+                    if (Regex.IsMatch(requestString, "^[A-Za-z]+;[^;]+;[^;]$")) {
+                        RemoteFirstRequest request = Deserialize(requestString);
+                        OnFirstActionPerformed?.Invoke(this, request);
+                            }
+                    else if (Regex.IsMatch(requestString, "^[A-Za-z]+;[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12};(.*?)")) {
+                        //
+                        RemoteActionRequest request = ExtendedDeserialize(requestString);
+                        OnActionPerformed?.Invoke(this, request);
+                    }
+                    else
+                    {
+                        // TODO: Do something when request does not make sense
+                    }
 
                     if (requestString.Equals("APPEXIT")) break;
                 }
@@ -105,16 +118,24 @@ namespace RemoteMvpLib
 
         // ############# Protocol layer #############
 
-        private RemoteActionRequest Deserialize(string requestString)
+        private RemoteFirstRequest Deserialize(string requestString)
         {
             string[] parts = requestString.Split(';');
-            RemoteActionRequest request = new RemoteActionRequest(Enum.Parse<ActionType>(parts[0]), parts[1], parts[2]);    // TODO: Add information, such as deleteusername
+            RemoteFirstRequest request = new RemoteFirstRequest(Enum.Parse<ActionType>(parts[0]), parts[1], parts[2]);    // TODO: Add information, such as deleteusername
             return request;
+        }
+        
+        private RemoteActionRequest ExtendedDeserialize(string requestString)
+        {
+            string[] parts = requestString.Split(';');
+            RemoteActionRequest actionRequest = new RemoteActionRequest(Enum.Parse<ActionType>(parts[0]), parts[1], parts[2]);
+            return actionRequest;
         }
 
         private string Serialize(RemoteActionResponse response)
         {
             return string.Format("{0};{1}", response.Type.ToString(), response.Message);
         }
+
     }
 }
