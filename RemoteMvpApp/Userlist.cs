@@ -99,6 +99,18 @@ namespace RemoteMvpApp
             _users.Clear();
         }
 
+        public User? GetByUsername(string username)
+        {
+            foreach(var user in _users)
+            {
+                if(user.UserName == username)
+                {
+                    return user;
+                }
+            }
+            return null;
+        }
+
         private void StoreUserData()
         {
             using (var writer = new StreamWriter(_filePath))

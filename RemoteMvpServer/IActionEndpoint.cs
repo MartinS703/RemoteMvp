@@ -6,6 +6,8 @@ namespace RemoteMvpLib
     {
         event EventHandler<RemoteFirstRequest> OnFirstActionPerformed;
         event EventHandler<RemoteActionRequest> OnActionPerformed;
+        event EventHandler<string> OnBadRequest;
+
         void RunActionEndpoint();
         void PerformActionResponse(Socket handler, RemoteActionResponse response);
     }

@@ -71,20 +71,21 @@ namespace RemoteMvpApp
         private void EndpointOnExtendedActionPerformed(object? sender, RemoteActionRequest actionRequest)
         {
             if (sender is not RemoteActionEndpoint) return;
-
             var handler = (RemoteActionEndpoint)sender;
+
+            bool isAdmin = _users.GetByUsername(sessions[actionRequest.SessionToken])?.admin ?? false;
             switch (actionRequest.Type)
             {
                 case ActionType.DeleteUser:
                     // TODO: Implement action
-                    if (sessions.ContainsKey(actionRequest.SessionToken))
+                    if (sessions.ContainsKey(actionRequest.SessionToken) && isAdmin)
                     {
                         Process_DeleteUser(handler, actionRequest.Instruction);
                     }
                     break;
                 case ActionType.SendUsers:
                     // TODO: Implement action
-                    if (sessions.ContainsKey(actionRequest.SessionToken))
+                    if (sessions.ContainsKey(actionRequest.SessionToken) && isAdmin)
                     {
                         Process_SendUsers(handler);
                     }

@@ -63,22 +63,25 @@ namespace RemoteMvpLib
                     Console.WriteLine("Remote client connected! Waiting for data ...");
                     int bytesRec = await Handler.ReceiveAsync(bytes, SocketFlags.None);
 
+                    // parse received bytes to actual message as string
                     string requestString = Encoding.ASCII.GetString(bytes, 0, bytesRec);
                     Console.WriteLine("Text received : {0}", requestString);
 
-                    //
-                    if (Regex.IsMatch(requestString, "^[A-Za-z]+;[^;]+;[^;]$")) {
+                    // Accept different request styles
+                    if (Regex.IsMatch(requestString, "^[A-Za-z]+;[^;]+;[^;]$"))
+                    {
                         RemoteFirstRequest request = Deserialize(requestString);
                         OnFirstActionPerformed?.Invoke(this, request);
-                            }
-                    else if (Regex.IsMatch(requestString, "^[A-Za-z]+;[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12};(.*?)")) {
-                        //
+                    }
+                    else if (Regex.IsMatch(requestString, "^[A-Za-z]+;[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12};(.*?)"))
+                    {
                         RemoteActionRequest request = ExtendedDeserialize(requestString);
                         OnActionPerformed?.Invoke(this, request);
                     }
                     else
                     {
                         // TODO: Do something when request does not make sense
+                        PerformActionResponse(Handler, new RemoteActionResponse(ResponseType.Error, "Error Code 400: Bad request"));
                     }
 
                     if (requestString.Equals("APPEXIT")) break;
