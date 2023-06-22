@@ -40,20 +40,27 @@ namespace RemoteMvpClient
 
         private async void OnLoginRequested(object? sender, Tuple<string, string> e)
         {
+            // TODO: Change RemoteActionRequest to RemoteFirstRequest
             RemoteFirstRequest loginRequest = new RemoteActionRequest(ActionType.Login, e.Item1, e.Item2);
             await ProcessRequest(loginRequest);
         }
 
         private async void OnRegisterRequested(object? sender, Tuple<string, string> e)
         {
+            // TODO: Change RemoteActionRequest to RemoteFirstRequest
             RemoteFirstRequest loginRequest = new RemoteActionRequest(ActionType.Register, e.Item1, e.Item2);
             await ProcessRequest(loginRequest);
         }
         private async void OnRegisterAdminRequested(object? sender, Tuple<string, string> e)
         {
+            // TODO: Change RemoteActionRequest to RemoteFirstRequest
             RemoteFirstRequest loginRequest = new RemoteActionRequest(ActionType.RegisterAdmin, e.Item1, e.Item2);
             await ProcessRequest(loginRequest);
         }
+
+        // TODO: For deletion or to show user list, send the following information ->      ActionType ;   sessionToken    ;    instruction as string(null if userlist, username if action == deletion)
+
+        // TODO: To logout, also send ActionType and sessionToken,   sessionToken than will be deleted an no longer available to get access
 
         /// <summary>
         /// Collect and process all UI events
