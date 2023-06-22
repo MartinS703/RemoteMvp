@@ -18,10 +18,10 @@ namespace RemoteMvpApp
         RegistrationOk
     }
 
-    internal class Userlist
+    public class Userlist
     {
-        private record User(string UserName, string Password, bool admin);
-        private readonly List<User> _users;
+        public record User(string UserName, string Password, bool admin);
+        public readonly List<User> _users;
         private string _filePath;
 
         /// <summary>
@@ -35,6 +35,18 @@ namespace RemoteMvpApp
             if (!String.IsNullOrEmpty(path) && path.EndsWith(".csv"))
             {
                 _filePath = path;
+            }
+        }
+
+        public void Delete(string username)
+        {
+            foreach(var user in _users)
+            {
+                if(user.UserName == username)
+                {
+                    _users.Remove(user);
+                    break;
+                }
             }
         }
 

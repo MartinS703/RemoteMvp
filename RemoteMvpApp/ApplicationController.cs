@@ -98,10 +98,12 @@ namespace RemoteMvpApp
 
         private void Process_DeleteUser(RemoteActionEndpoint handler, string usernameDelete)
         {
+            _users.Delete(usernameDelete);
             // TODO: Implement deletion
         }
         private void Process_SendUsers(RemoteActionEndpoint handler)
         {
+            handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, _users._users.ToString()));
             // TODO: Implement send users
         }
         private void Process_Login(RemoteActionEndpoint handler, string username, string password)
