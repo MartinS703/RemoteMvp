@@ -57,12 +57,9 @@ namespace RemoteMvpApp
                 case ActionType.Register:
                     Process_Register(handler, request.UserName, request.Password);
                     break;
-                //
-
                 case ActionType.RegisterAdmin:
                     Process_Register(handler, request.UserName, request.Password, true);
                     break;
-                // TODO: More ActionTypes
                 default:
                     throw new ArgumentOutOfRangeException("Request not supported");
             }
@@ -90,7 +87,12 @@ namespace RemoteMvpApp
                         Process_SendUsers(handler);
                     }
                     break;
-
+                case ActionType.Logout:
+                    if(sessions.ContainsKey(actionRequest.SessionToken) && isAdmin)
+                    {
+                        sessions.TryRemove(actionRequest.SessionToken, out _);
+                    }
+                    break;
                 // TODO: More ActionTypes
                 default:
                     throw new ArgumentOutOfRangeException("Request not supported");
@@ -100,6 +102,7 @@ namespace RemoteMvpApp
         private void Process_DeleteUser(RemoteActionEndpoint handler, string usernameDelete)
         {
             _users.Delete(usernameDelete);
+            DeleteUsersToken(usernameDelete);
             // TODO: Implement deletion
         }
         private void Process_SendUsers(RemoteActionEndpoint handler)
@@ -181,10 +184,21 @@ namespace RemoteMvpApp
             // Create new session token
             string sessionToken = Guid.NewGuid().ToString();      
 
-            // Store the session token on the server side
+            // Store the session token
             sessions.TryAdd(sessionToken, username);
 
             return sessionToken;
+        }
+
+        private void DeleteUsersToken(string username)
+        {
+            foreach(var session in sessions)
+            {
+                if(session.Value == username)
+                {
+                    sessions.TryRemove(session);
+                }
+            }
         }
     }
 }
