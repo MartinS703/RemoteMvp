@@ -86,7 +86,7 @@ namespace RemoteMvpApp
                     // TODO: Implement action
                     if (sessions.ContainsKey(actionRequest.SessionToken) && isAdmin)
                     {
-                        Process_DeleteUser(handler, actionRequest.Instruction);
+                        Process_DeleteUser(actionRequest.Instruction);
                     }
                     break;
                 case ActionType.SendUsers:
