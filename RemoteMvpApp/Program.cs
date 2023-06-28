@@ -8,7 +8,7 @@ using RemoteMvpLib;
 // Bootstrapper sequence
 
 // Server-side classes
-var endpoint = new RemoteActionEndpoint("localhost",1000);
+IActionEndpoint endpoint = new RemoteActionEndpoint("localhost",1000);      
 var server = new ApplicationController(endpoint);
 //server.RunActionEndPoint();                       // Synchronous (blocking) server start
 Task serverTask = server.RunActionEndPointAsync();  // Asynchronous (non-blocking) server start

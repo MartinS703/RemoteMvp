@@ -10,6 +10,9 @@ namespace RemoteMvpLib
         public event EventHandler<RemoteFirstRequest> OnFirstActionPerformed;
         public event EventHandler<RemoteActionRequest> OnActionPerformed;
 
+        // TODO: Löschen wenn nicht gebraucht
+        public event EventHandler<string> OnBadRequest;
+
         private readonly IPAddress _ipAddress;
         private readonly IPEndPoint _localEndPoint;
         private readonly IPHostEntry _host;
