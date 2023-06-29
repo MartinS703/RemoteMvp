@@ -49,11 +49,13 @@ namespace RemoteMvpClient
             {
                 button1.Enabled = true;
                 button2.Enabled = true;
+                btnRegisterAdmin.Enabled = true;
             }
             else
             {
                 button1.Enabled = false;
                 button2.Enabled = false;
+                btnRegisterAdmin.Enabled = false;
             }
         }
 
@@ -63,11 +65,13 @@ namespace RemoteMvpClient
             {
                 button1.Enabled = true;
                 button2.Enabled = true;
+                btnRegisterAdmin.Enabled = true;
             }
             else
             {
                 button1.Enabled = false;
                 button2.Enabled = false;
+                btnRegisterAdmin.Enabled=false;
             }
         }
 

@@ -41,20 +41,20 @@ namespace RemoteMvpClient
         private async void OnLoginRequested(object? sender, Tuple<string, string> e)
         {
             // TODO: Change RemoteActionRequest to RemoteFirstRequest
-            RemoteFirstRequest loginRequest = new RemoteActionRequest(ActionType.Login, e.Item1, e.Item2);
+            RemoteFirstRequest loginRequest = new RemoteFirstRequest(ActionType.Login, e.Item1, e.Item2);
             await ProcessRequest(loginRequest);
         }
 
         private async void OnRegisterRequested(object? sender, Tuple<string, string> e)
         {
             // TODO: Change RemoteActionRequest to RemoteFirstRequest
-            RemoteFirstRequest loginRequest = new RemoteActionRequest(ActionType.Register, e.Item1, e.Item2);
+            RemoteFirstRequest loginRequest = new RemoteFirstRequest(ActionType.Register, e.Item1, e.Item2);
             await ProcessRequest(loginRequest);
         }
         private async void OnRegisterAdminRequested(object? sender, Tuple<string, string> e)
         {
             // TODO: Change RemoteActionRequest to RemoteFirstRequest
-            RemoteFirstRequest loginRequest = new RemoteActionRequest(ActionType.RegisterAdmin, e.Item1, e.Item2);
+            RemoteFirstRequest loginRequest = new RemoteFirstRequest(ActionType.RegisterAdmin, e.Item1, e.Item2);
             await ProcessRequest(loginRequest);
         }
 
