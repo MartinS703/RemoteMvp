@@ -7,22 +7,20 @@ namespace RemoteMvpApp
 {
     internal class ApplicationController
     {
-        //
+        // concurrent = gleichzeitig, concurrent access from different threads
         private static ConcurrentDictionary<string, string> sessions = new ConcurrentDictionary<string, string>();
-        //
-
 
         // Model 
         private readonly Userlist _users;
 
         // ActionEndpoint (to be called by the view)
-        private readonly IActionEndpoint _actionEndpoint;
+        private readonly IActionEndpoint _actionEndpoint;       //-> handles requests and responses
 
         private string _filePath;
 
         public ApplicationController(IActionEndpoint actionEndpoint)
         {
-            _filePath = "myFilepath.csv";           // TODO: Change if custom filepath from user
+            _filePath = "myFilepath.csv";           // Change if custom filepath from user
 
             // Create new Model
             _users = new Userlist(_filePath);
@@ -36,7 +34,6 @@ namespace RemoteMvpApp
 
         public void RunActionEndPoint() => _actionEndpoint.RunActionEndpoint();
 
-
         public Task RunActionEndPointAsync()
         {
             var task = new Task(_actionEndpoint.RunActionEndpoint);
@@ -44,6 +41,12 @@ namespace RemoteMvpApp
             return task;
         }
 
+        /// <summary>
+        /// Handles Login and Register requests
+        /// </summary>
+        /// <param name="sender">sender object that should be a <see cref="RemoteActionEndpoint"/></param>
+        /// <param name="request">Login or register request</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         private void EndpointOnActionPerformed(object? sender, RemoteFirstRequest request)
         {
             if (sender is not RemoteActionEndpoint) return;
@@ -65,6 +68,12 @@ namespace RemoteMvpApp
             }
         }
 
+        /// <summary>
+        /// Handles various requests
+        /// </summary>
+        /// <param name="sender">sender object that should be a <see cref="RemoteActionEndpoint"/></param>
+        /// <param name="request">Client request</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         private void EndpointOnExtendedActionPerformed(object? sender, RemoteActionRequest actionRequest)
         {
             if (sender is not RemoteActionEndpoint) return;
@@ -77,7 +86,7 @@ namespace RemoteMvpApp
                     // TODO: Implement action
                     if (sessions.ContainsKey(actionRequest.SessionToken) && isAdmin)
                     {
-                        Process_DeleteUser(handler, actionRequest.Instruction);
+                        Process_DeleteUser(actionRequest.Instruction);
                     }
                     break;
                 case ActionType.SendUsers:
@@ -99,12 +108,21 @@ namespace RemoteMvpApp
             }
         }
 
-        private void Process_DeleteUser(RemoteActionEndpoint handler, string usernameDelete)
+        /// <summary>
+        /// Delete user from databank
+        /// </summary>
+        /// <param name="usernameDelete">Username of user who should get deleted</param>
+        private void Process_DeleteUser(string usernameDelete)
         {
             _users.Delete(usernameDelete);
             DeleteUsersToken(usernameDelete);
             // TODO: Implement deletion
         }
+
+        /// <summary>
+        /// Sends userlist to 
+        /// </summary>
+        /// <param name="handler"></param>
         private void Process_SendUsers(RemoteActionEndpoint handler)
         {
             handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, _users._users.ToString()));
