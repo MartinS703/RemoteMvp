@@ -100,7 +100,9 @@ namespace RemoteMvpApp
                 case ActionType.Logout:
                     if(sessions.ContainsKey(actionRequest.SessionToken) && isAdmin)
                     {
+                        // TODO: Do something if sessionToken deletion was not successful, do not logout user than!
                         sessions.TryRemove(actionRequest.SessionToken, out _);
+                        handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, "Successfully logged out"));
                     }
                     break;
                 // TODO: More ActionTypes

@@ -16,6 +16,7 @@ namespace RemoteMvpClient
     {
         public event EventHandler ShowUserListRequested;
         public event EventHandler<string> DeleteUserRequested;
+        public event EventHandler LogoutRequested;
 
         public AdminClient()
         {
@@ -44,6 +45,12 @@ namespace RemoteMvpClient
                 DeleteUserRequested?.Invoke(this, userToDelete);
             }
         }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            LogoutRequested?.Invoke(this, EventArgs.Empty);
+        }
+
         private void AdminClient_Load(object sender, EventArgs e)
         {
 

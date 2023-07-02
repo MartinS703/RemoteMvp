@@ -12,6 +12,7 @@ namespace RemoteMvpClient
         private string _sessionToken;
         private readonly IActionAdapter _adapter;
         AdminClient _adminClient;
+
         public AdminPresenter(string sessionToken, IActionAdapter adapter)
         {
             _adminClient = new AdminClient();
@@ -29,6 +30,13 @@ namespace RemoteMvpClient
         {
             _adminClient.DeleteUserRequested += OnDeleteUserRequested;
             _adminClient.ShowUserListRequested += OnShowUserListRequested;
+            _adminClient.LogoutRequested += OnLogoutRequested;
+        }
+
+        private async void OnLogoutRequested(object? sender, EventArgs e)
+        {
+            RemoteActionRequest logoutRequested = new RemoteActionRequest(ActionType.Logout, _sessionToken, "");
+            await ProcessRequest(logoutRequested);
         }
 
         private async void OnShowUserListRequested(object? sender, EventArgs e)
@@ -61,6 +69,8 @@ namespace RemoteMvpClient
                 switch (response.Type)
                 {
                     case ResponseType.Error:
+                        // TODO: Implement Error message if response was unexpected
+
                         //_adminClient.ShowErrorMessage(response.Message);
                         break;
                     case ResponseType.Success:
@@ -70,8 +80,15 @@ namespace RemoteMvpClient
                                 string[] split = response.Message.Split('*');
                                 _adminClient.ShowUsers(split.ToList());
                                 break;
+                            case ActionType.DeleteUser:
+                                // TODO: Implement reaction to deletion response
+                                break;
+                            case ActionType.Logout:
+                                // TODO: Implement reaction to logout (Delete session Token and maybe reopen login screen)
+                                _sessionToken = "";
+                                _adminClient.Close();
 
-                                // Add other action types here:
+                                break;
                         }
                         break;
                 }
