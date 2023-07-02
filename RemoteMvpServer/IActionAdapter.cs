@@ -2,6 +2,6 @@
 {
     public interface IActionAdapter
     {
-        Task<RemoteActionResponse> PerformActionAsync(RemoteFirstRequest request);
+        Task<IActionResponse> PerformActionAsync(IRequest request);
     }
 }

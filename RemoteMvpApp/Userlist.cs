@@ -1,7 +1,9 @@
 ﻿using CsvHelper;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,10 +34,12 @@ namespace RemoteMvpApp
         {
             _users = new List<User>();
             // Check if filePath is a valid csv filepath
-            if (!String.IsNullOrEmpty(path) && path.EndsWith(".csv"))
+            if (!string.IsNullOrEmpty(path) && path.EndsWith(".csv"))
             {
                 _filePath = path;
             }
+
+            LoadUserData();
         }
 
         public void Delete(string username)
@@ -48,6 +52,7 @@ namespace RemoteMvpApp
                     break;
                 }
             }
+            StoreUserData();
         }
 
         public UserListActionResult LoginUser(string username, string password)
@@ -86,18 +91,20 @@ namespace RemoteMvpApp
 
             User newUser = new(username, password, admin);
             _users.Add(newUser);
+
+            StoreUserData();
             return UserListActionResult.RegistrationOk;
         }
 
-        public void RemoveUser(string username)
-        {
-            _users.RemoveAll(user => user.UserName.Equals(username));
-        }
+        //public void RemoveUser(string username)
+        //{
+        //    _users.RemoveAll(user => user.UserName.Equals(username));
+        //}
 
-        public void RemoveAllUsers()
-        {
-            _users.Clear();
-        }
+        //public void RemoveAllUsers()
+        //{
+        //    _users.Clear();
+        //}
 
         public User? GetByUsername(string username)
         {
@@ -121,10 +128,22 @@ namespace RemoteMvpApp
 
         }
 
-
-        // irgendetwas mit csv 
-        // interfaces
-
-        // Vielleicht bekommt man Code(View oder MODEL)
+        private void LoadUserData()
+        {
+            using (var reader = new StreamReader(_filePath))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                csv.Read();
+                csv.ReadHeader();
+                while (csv.Read())
+                {
+                    var record = csv.GetRecord<User>();
+                    if (record != null)
+                    {
+                        _users.Add(record);
+                    }
+                }
+            }
+        }
     }
 }

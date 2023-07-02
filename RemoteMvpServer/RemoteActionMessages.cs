@@ -1,5 +1,7 @@
 ﻿
 
+using System.Security;
+
 namespace RemoteMvpLib
 {
     public enum ActionType
@@ -12,7 +14,7 @@ namespace RemoteMvpLib
         SendUsers,
     }
 
-    public class RemoteFirstRequest
+    public class RemoteFirstRequest : IRequest
     {
         public ActionType Type { get; }
 
@@ -27,7 +29,7 @@ namespace RemoteMvpLib
         }
     }
 
-    public class RemoteActionRequest
+    public class RemoteActionRequest : IRequest
     {
         public ActionType Type { get; }
 
@@ -43,37 +45,61 @@ namespace RemoteMvpLib
         }
     }
 
+    public interface IRequest
+    {
+        ActionType Type { get; }
+    }   // TODO: Maybe find better solution
+
     public enum ResponseType
     {
         Success,
         Error
     }
 
-    public class RemoteActionResponse
+    public class RemoteActionResponse : IActionResponse
     {
         public ResponseType Type { get; set; }
 
         public string? Message { get; set; }
 
+        /// <summary>
+        /// Do not use, is null!
+        /// </summary>          
+        public string NewToken { get; }
+
+        /// <summary>
+        /// Do not use, no information!
+        /// </summary>
+        public bool AdminVerified { get; }
+
         public RemoteActionResponse(ResponseType type, string? message)
         {
             Type = type;
             Message = message;
+            NewToken = null;
+            AdminVerified = false;
         }
     }
-    public class RemoteExtendedActionResponse
+    public class RemoteExtendedActionResponse : IActionResponse
     {
         public ResponseType Type { get; }
         public string? Message { get; }
         public string NewToken { get; }
-        public bool AdminVerfied { get; }
+        public bool AdminVerified { get; }
 
         public RemoteExtendedActionResponse(ResponseType type, string? message, string newToken , bool adminVerfied)
         {
             Type = type;
             Message = message;
             NewToken = newToken;
-            AdminVerfied = adminVerfied;
+            AdminVerified = adminVerfied;
         }
+    }
+    public interface IActionResponse
+    {
+        ResponseType Type { get; }
+        string? Message { get; }
+        string NewToken { get; }
+        bool AdminVerified { get; }
     }
 }

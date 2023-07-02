@@ -1,6 +1,7 @@
 ﻿using CsvHelper.Configuration.Attributes;
 using RemoteMvpLib;
 using System.Collections.Concurrent;
+using System.Text;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace RemoteMvpApp
@@ -86,7 +87,7 @@ namespace RemoteMvpApp
                     // TODO: Implement action
                     if (sessions.ContainsKey(actionRequest.SessionToken) && isAdmin)
                     {
-                        Process_DeleteUser(actionRequest.Instruction);
+                        Process_DeleteUser(handler, actionRequest.Instruction);
                     }
                     break;
                 case ActionType.SendUsers:
@@ -99,7 +100,9 @@ namespace RemoteMvpApp
                 case ActionType.Logout:
                     if(sessions.ContainsKey(actionRequest.SessionToken) && isAdmin)
                     {
+                        // TODO: Do something if sessionToken deletion was not successful, do not logout user than!
                         sessions.TryRemove(actionRequest.SessionToken, out _);
+                        handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, "Successfully logged out"));
                     }
                     break;
                 // TODO: More ActionTypes
@@ -112,11 +115,12 @@ namespace RemoteMvpApp
         /// Delete user from databank
         /// </summary>
         /// <param name="usernameDelete">Username of user who should get deleted</param>
-        private void Process_DeleteUser(string usernameDelete)
+        private void Process_DeleteUser(RemoteActionEndpoint handler, string usernameDelete)
         {
+            // TODO: ResponseType.Error if username didn't exist
             _users.Delete(usernameDelete);
             DeleteUsersToken(usernameDelete);
-            // TODO: Implement deletion
+            handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, $"Successfully deleted {usernameDelete}"));
         }
 
         /// <summary>
@@ -125,8 +129,12 @@ namespace RemoteMvpApp
         /// <param name="handler"></param>
         private void Process_SendUsers(RemoteActionEndpoint handler)
         {
-            handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, _users._users.ToString()));
-            // TODO: Implement send users
+            StringBuilder usersString = new StringBuilder();
+            foreach(var user in _users._users)
+            {
+                usersString.Append(user.UserName + "*");
+            }
+            handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, usersString.ToString()));
         }
         private void Process_Login(RemoteActionEndpoint handler, string username, string password)
         {

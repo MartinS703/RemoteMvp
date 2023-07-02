@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace RemoteMvpLib
 {
@@ -16,15 +17,47 @@ namespace RemoteMvpLib
             _port = port;
         }
 
-        public async Task<RemoteActionResponse> PerformActionAsync(RemoteFirstRequest request)
+        public async Task<IActionResponse> PerformActionAsync(IRequest request)
         {
             var buffer = new byte[1024];
-            RemoteActionResponse response;
+
+            IActionResponse response = null;
+
+            RemoteActionRequest rar = null;
+            RemoteFirstRequest rfr = null;
+
+            // TODO: check which type IRequest is
+            if(request is RemoteActionRequest)
+            {
+                 rar = (RemoteActionRequest)request;
+            }
+            else if(request is RemoteFirstRequest)
+            {
+                 rfr = (RemoteFirstRequest)request;
+            }
+            else
+            {
+                throw new ArgumentException("Given request is not defined");
+            }
+
 
             // Connect the socket to the remote endpoint. Catch any errors.
             try
             {
-                string message = Serialize(request);
+                string message;
+                if(rar != null)
+                {
+                    message = ActionSerialize(rar);
+                }
+                else if(rfr != null)
+                {
+                    message = Serialize(rfr);
+                }
+                else
+                {
+                    // do not send anything
+                    message = "";
+                }
                 Console.WriteLine("Performing remote action: " + message);
                 // Connect to a Remote server
                 // Get Host IP Address that is used to establish a connection
@@ -51,11 +84,28 @@ namespace RemoteMvpLib
                 Console.WriteLine($"{bytesSent} bytes sent to server. Waiting for response ...");
 
                 // Receive the response from the remote device asynchronously
+                
+                
                 var bytesRec = await sender.ReceiveAsync(buffer,SocketFlags.None);
                 var responseString = Encoding.ASCII.GetString(buffer, 0, bytesRec);
                 Console.WriteLine($"Received {bytesRec} bytes: {responseString}");
 
-                response = Deserialize(responseString);
+                // TODO: Check which form response has
+
+                if (Regex.Match(responseString, @"^[^;]+;[^;]+;[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12};(True|False)$").Success)
+                {
+                    response = ActionDeserialize(responseString);
+                }
+
+                // TODO: Other Regex!!! Otherwise an '!' character will lead to error
+                else if (Regex.Match(responseString, @"[A-Za-z]+;[^;]*").Success)
+                {
+                    response = Deserialize(responseString);
+                }
+                else
+                {
+                    throw new FormatException("Response is in unknown format");
+                }
 
                 // Release the socket.
                 sender.Shutdown(SocketShutdown.Both);
@@ -87,11 +137,24 @@ namespace RemoteMvpLib
         {
             return string.Format("{0};{1};{2}", request.Type.ToString(), request.UserName, request.Password);
         }
+        private static string ActionSerialize(RemoteActionRequest request)
+        {
+            return string.Format("{0};{1};{2}", request.Type.ToString(), request.SessionToken, request.Instruction);
+        }
 
         private static RemoteActionResponse Deserialize(string response)
         {
             string[] parts = response.Split(';');
             RemoteActionResponse res = new RemoteActionResponse(Enum.Parse<ResponseType>(parts[0]), parts[1]);
+            return res;
+        }
+        private static RemoteExtendedActionResponse ActionDeserialize(string response)
+        {
+            string[] parts = response.Split(';');
+
+            // TODO: Exception handling
+            bool adminBool = bool.Parse(parts[3]);
+            RemoteExtendedActionResponse res = new RemoteExtendedActionResponse(Enum.Parse<ResponseType>(parts[0]), parts[1], parts[2], adminBool);
             return res;
         }
     }

@@ -11,9 +11,6 @@ namespace RemoteMvpLib
         public event EventHandler<RemoteActionRequest> OnActionPerformed;
         //public event EventHandler<string> OnBadRequest;
 
-        // TODO: Löschen wenn nicht gebraucht
-        public event EventHandler<string> OnBadRequest;
-
         private readonly IPAddress _ipAddress;
         private readonly IPEndPoint _localEndPoint;
         private readonly IPHostEntry _host;
@@ -72,15 +69,17 @@ namespace RemoteMvpLib
                     Console.WriteLine("Text received : {0}", requestString);
 
                     // Accept different request styles
-                    if (Regex.IsMatch(requestString, "^[A-Za-z]+;[^;]+;[^;]$"))
-                    {
-                        RemoteFirstRequest request = Deserialize(requestString);
-                        OnFirstActionPerformed?.Invoke(this, request);
-                    }
-                    else if (Regex.IsMatch(requestString, "^[A-Za-z]+;[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12};(.*?)"))
+
+                    // TODO: Change to accept all sorts of passwords
+                    if (Regex.IsMatch(requestString, "^[A-Za-z]+;[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12};(.*?)"))
                     {
                         RemoteActionRequest request = ExtendedDeserialize(requestString);
                         OnActionPerformed?.Invoke(this, request);
+                    }
+                    else if (Regex.IsMatch(requestString, "^[A-Za-z]+;[^;]+;[^;]+$"))
+                    {
+                        RemoteFirstRequest request = Deserialize(requestString);
+                        OnFirstActionPerformed?.Invoke(this, request);
                     }
                     else
                     {
@@ -120,7 +119,7 @@ namespace RemoteMvpLib
         private string ExtendedSerialize(RemoteExtendedActionResponse extendedResponse)
         {
             // TODO: Peter sagen, dass er unterschiedliche nachrichten bekommt
-            return string.Format("{0};{1};{2};{3}", extendedResponse.Type.ToString(), extendedResponse.Message, extendedResponse.NewToken, extendedResponse.AdminVerfied.ToString());
+            return string.Format("{0};{1};{2};{3}", extendedResponse.Type.ToString(), extendedResponse.Message, extendedResponse.NewToken, extendedResponse.AdminVerified);
         }
 
         // ############# Protocol layer #############
