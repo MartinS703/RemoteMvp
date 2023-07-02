@@ -9,7 +9,7 @@ namespace RemoteMvpLib
     {
         public event EventHandler<RemoteFirstRequest> OnFirstActionPerformed;
         public event EventHandler<RemoteActionRequest> OnActionPerformed;
-        public event EventHandler<string> OnBadRequest;
+        //public event EventHandler<string> OnBadRequest;
 
         // TODO: Löschen wenn nicht gebraucht
         public event EventHandler<string> OnBadRequest;
