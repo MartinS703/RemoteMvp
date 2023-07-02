@@ -14,7 +14,7 @@ namespace RemoteMvpLib
         SendUsers,
     }
 
-    public class RemoteFirstRequest
+    public class RemoteFirstRequest : IRequest
     {
         public ActionType Type { get; }
 
@@ -29,7 +29,7 @@ namespace RemoteMvpLib
         }
     }
 
-    public class RemoteActionRequest
+    public class RemoteActionRequest : IRequest
     {
         public ActionType Type { get; }
 
@@ -45,6 +45,11 @@ namespace RemoteMvpLib
         }
     }
 
+    public interface IRequest
+    {
+        ActionType Type { get; }
+    }   // TODO: Maybe find better solution
+
     public enum ResponseType
     {
         Success,
@@ -59,7 +64,7 @@ namespace RemoteMvpLib
 
         /// <summary>
         /// Do not use, is null!
-        /// </summary>
+        /// </summary>          
         public string NewToken { get; }
 
         /// <summary>

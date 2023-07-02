@@ -71,15 +71,15 @@ namespace RemoteMvpLib
                     // Accept different request styles
 
                     // TODO: Change to accept all sorts of passwords
-                    if (Regex.IsMatch(requestString, "^[A-Za-z]+;[^;]+;[^;]+$"))
-                    {
-                        RemoteFirstRequest request = Deserialize(requestString);
-                        OnFirstActionPerformed?.Invoke(this, request);
-                    }
-                    else if (Regex.IsMatch(requestString, "^[A-Za-z]+;[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12};(.*?)"))
+                    if (Regex.IsMatch(requestString, "^[A-Za-z]+;[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12};(.*?)"))
                     {
                         RemoteActionRequest request = ExtendedDeserialize(requestString);
                         OnActionPerformed?.Invoke(this, request);
+                    }
+                    else if (Regex.IsMatch(requestString, "^[A-Za-z]+;[^;]+;[^;]+$"))
+                    {
+                        RemoteFirstRequest request = Deserialize(requestString);
+                        OnFirstActionPerformed?.Invoke(this, request);
                     }
                     else
                     {
@@ -119,7 +119,7 @@ namespace RemoteMvpLib
         private string ExtendedSerialize(RemoteExtendedActionResponse extendedResponse)
         {
             // TODO: Peter sagen, dass er unterschiedliche nachrichten bekommt
-            return string.Format("{0};{1};{2};{3}", extendedResponse.Type.ToString(), extendedResponse.Message, extendedResponse.NewToken, extendedResponse.AdminVerfied.ToString());
+            return string.Format("{0};{1};{2};{3}", extendedResponse.Type.ToString(), extendedResponse.Message, extendedResponse.NewToken, extendedResponse.AdminVerified);
         }
 
         // ############# Protocol layer #############
