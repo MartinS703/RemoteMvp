@@ -69,7 +69,9 @@ namespace RemoteMvpLib
                     Console.WriteLine("Text received : {0}", requestString);
 
                     // Accept different request styles
-                    if (Regex.IsMatch(requestString, "^[A-Za-z]+;[^;]+;[^;]$"))
+
+                    // TODO: Change to accept all sorts of passwords
+                    if (Regex.IsMatch(requestString, "^[A-Za-z]+;[^;]+;[^;]+$"))
                     {
                         RemoteFirstRequest request = Deserialize(requestString);
                         OnFirstActionPerformed?.Invoke(this, request);
