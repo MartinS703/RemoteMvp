@@ -40,20 +40,19 @@ namespace RemoteMvpClient
 
         private async void OnLoginRequested(object? sender, Tuple<string, string> e)
         {
-            // TODO: Change RemoteActionRequest to RemoteFirstRequest
             RemoteFirstRequest loginRequest = new RemoteFirstRequest(ActionType.Login, e.Item1, e.Item2);
+
+            // TODO: Wait for my response, it is in this format: ResponseType.Success; short message; token; true/false
             await ProcessRequest(loginRequest);
         }
 
         private async void OnRegisterRequested(object? sender, Tuple<string, string> e)
         {
-            // TODO: Change RemoteActionRequest to RemoteFirstRequest
             RemoteFirstRequest loginRequest = new RemoteFirstRequest(ActionType.Register, e.Item1, e.Item2);
             await ProcessRequest(loginRequest);
         }
         private async void OnRegisterAdminRequested(object? sender, Tuple<string, string> e)
         {
-            // TODO: Change RemoteActionRequest to RemoteFirstRequest
             RemoteFirstRequest loginRequest = new RemoteFirstRequest(ActionType.RegisterAdmin, e.Item1, e.Item2);
             await ProcessRequest(loginRequest);
         }
@@ -70,6 +69,8 @@ namespace RemoteMvpClient
         private async Task ProcessRequest(RemoteFirstRequest request)
         {
             // Execute action in actionlistener and wait for result asynchronously
+
+            // TODO: response is either RemoteActionResponse or RemoteExtendedActionResponse
             RemoteActionResponse response = await _adapter.PerformActionAsync(request);
 
             // Process result
