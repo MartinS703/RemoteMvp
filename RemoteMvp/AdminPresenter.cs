@@ -37,6 +37,7 @@ namespace RemoteMvpClient
         {
             RemoteActionRequest logoutRequested = new RemoteActionRequest(ActionType.Logout, _sessionToken, "");
             await ProcessRequest(logoutRequested);
+
         }
 
         private async void OnShowUserListRequested(object? sender, EventArgs e)
@@ -81,22 +82,24 @@ namespace RemoteMvpClient
                                 _adminClient.ShowUsers(split.ToList());
                                 break;
                             case ActionType.DeleteUser:
-                                // TODO: Implement reaction to deletion response
+                                MessageBox.Show("User was successfully deleted ", "Delete", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 break;
                             case ActionType.Logout:
-                                // TODO: Implement reaction to logout (Delete session Token and maybe reopen login screen)
+                                MessageBox.Show("You will now be logged out\r\nGood bye ", "Delete", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 _sessionToken = "";
                                 _adminClient.Close();
-
+;
                                 break;
                         }
                         break;
                 }
+               
             }
             else
             {
                 throw new ArgumentException("Response type is not defined");
             }
         }
+        
     }
 }

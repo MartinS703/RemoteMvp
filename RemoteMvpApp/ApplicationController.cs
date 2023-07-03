@@ -2,6 +2,7 @@
 using RemoteMvpLib;
 using System.Collections.Concurrent;
 using System.Text;
+using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace RemoteMvpApp
@@ -18,10 +19,11 @@ namespace RemoteMvpApp
         private readonly IActionEndpoint _actionEndpoint;       //-> handles requests and responses
 
         private string _filePath;
+        private string _loginUser;
 
         public ApplicationController(IActionEndpoint actionEndpoint)
         {
-            _filePath = "myFilepath.csv";           // Change if custom filepath from user
+            _filePath = @"C:\Users\peder\OneDrive\Desktop\Studium\2. Semester\Softwareentwicklung\Users.csv";           // Change if custom filepath from user
 
             // Create new Model
             _users = new Userlist(_filePath);
@@ -117,10 +119,17 @@ namespace RemoteMvpApp
         /// <param name="usernameDelete">Username of user who should get deleted</param>
         private void Process_DeleteUser(RemoteActionEndpoint handler, string usernameDelete)
         {
-            // TODO: ResponseType.Error if username didn't exist
-            _users.Delete(usernameDelete);
-            DeleteUsersToken(usernameDelete);
-            handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, $"Successfully deleted {usernameDelete}"));
+            if(_loginUser == usernameDelete)
+            {
+                MessageBox.Show("The current user cannot be deleted: " + usernameDelete, "Delete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                _users.Delete(usernameDelete);
+                DeleteUsersToken(usernameDelete);
+                handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Success, $"Successfully deleted {usernameDelete}"));
+            }
+           
         }
 
         /// <summary>
@@ -138,6 +147,7 @@ namespace RemoteMvpApp
         }
         private void Process_Login(RemoteActionEndpoint handler, string username, string password)
         {
+            
             switch (_users.LoginUser(username, password))
             {
                 case UserListActionResult.AccessGranted:
@@ -158,6 +168,7 @@ namespace RemoteMvpApp
                     handler.PerformActionResponse(handler.Handler, new RemoteActionResponse(ResponseType.Error, "Unsupported action."));
                     break;
             }
+            _loginUser = username;
         }
 
         private void Process_Register(RemoteActionEndpoint handler, string username, string password, bool admin = false)
@@ -218,13 +229,14 @@ namespace RemoteMvpApp
 
         private void DeleteUsersToken(string username)
         {
-            foreach(var session in sessions)
+            foreach (var session in sessions)
             {
-                if(session.Value == username)
+                if (session.Value == username)
                 {
                     sessions.TryRemove(session);
                 }
             }
+           
         }
     }
 }

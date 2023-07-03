@@ -9,6 +9,8 @@ namespace RemoteMvpLib
     {
         public event EventHandler<RemoteFirstRequest> OnFirstActionPerformed;
         public event EventHandler<RemoteActionRequest> OnActionPerformed;
+        public event EventHandler<string> OnBadRequest;
+
         //public event EventHandler<string> OnBadRequest;
 
         private readonly IPAddress _ipAddress;

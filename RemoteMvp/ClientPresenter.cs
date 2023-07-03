@@ -15,6 +15,7 @@ namespace RemoteMvpClient
         private readonly IActionAdapter _adapter;
         private string _sessionToken;
         private AdminPresenter _adminPresenter;
+        
 
         public ClientPresenter(IActionAdapter adapter)
         {
@@ -25,7 +26,7 @@ namespace RemoteMvpClient
             _clientView.RegisterAdminRequested += OnRegisterAdminRequested;
         }
 
-       
+
 
         public void OpenUI(bool isModal)
         {

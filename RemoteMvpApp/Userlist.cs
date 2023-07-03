@@ -25,6 +25,7 @@ namespace RemoteMvpApp
         public record User(string UserName, string Password, bool admin);
         public readonly List<User> _users;
         private string _filePath;
+        private string _loginUserName;
 
         /// <summary>
         /// just accept csvfile paths
@@ -44,20 +45,22 @@ namespace RemoteMvpApp
 
         public void Delete(string username)
         {
-            foreach(var user in _users)
+            foreach (var user in _users)
             {
-                if(user.UserName == username)
+                if (user.UserName == username)
                 {
                     _users.Remove(user);
                     break;
                 }
             }
             StoreUserData();
+            
         }
 
         public UserListActionResult LoginUser(string username, string password)
         {
-            foreach (var user in _users.Where(user => user.UserName.Equals(username)))
+            _loginUserName = username;
+            foreach (var user in _users.Where(user => user.UserName.Equals(_loginUserName)))
             {
                 if (user.Password.Equals(password))
                 {
